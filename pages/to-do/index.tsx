@@ -1,8 +1,8 @@
 // React
-import { useReducer,useContext } from 'react';
+import { useReducer, useContext } from 'react';
 
 // Next.js
-import { GetStaticProps } from 'next';
+import { GetStaticProps, InferGetStaticPropsType } from 'next';
 import { useRouter } from 'next/router';
 import Link from 'next/link';
 // Next-i18n
@@ -26,7 +26,7 @@ function reducer(state: any, action: any) {
   }
 }
 
-export default function ToDo() {
+export default function ToDo(context: InferGetStaticPropsType<typeof getStaticProps>) {
   const router = useRouter();
   const { t, i18n } = useTranslation(['common']);
   const { index, setCurrentIndex } = useContext(i18nContext);
@@ -60,9 +60,14 @@ export default function ToDo() {
   );
 }
 
-export const getStaticProps: GetStaticProps = async ({ locale }) => {
+export const getStaticProps: GetStaticProps = async ({ locale, locales = [] }) => {
+
   return {
     props: {
+      paths: [
+        { locale: 'en' },
+        { locale: 'tw' },
+      ],
       ...(await serverSideTranslations(locale ?? '', ['common'])),
     },
   };
